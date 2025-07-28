@@ -29,9 +29,7 @@ public class AuthenticationController {
     //if removed, also check SpringSecurityConfig.java to remove the security bypass
     @PostMapping("/create-user")
     public ResponseEntity<String> createUser(@RequestBody User request) {
-        System.out.println("5");
         String password = authenticationService.createUser(request.getUsername());
-        System.out.println("6");
         return ResponseEntity.ok(password);
     }
 }
