@@ -3,6 +3,7 @@ package com.nelson.springproject.service.impl;
 import com.nelson.springproject.dto.*;
 import com.nelson.springproject.entity.User;
 import com.nelson.springproject.exception.InvalidPasswordException;
+import com.nelson.springproject.exception.UserAlreadyExistsException;
 import com.nelson.springproject.exception.UserNotFoundException;
 import com.nelson.springproject.repository.UserRepository;
 import com.nelson.springproject.security.JwtTokenProvider;
@@ -12,13 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -72,6 +74,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public String createUser(String username) {
+        Optional<User> userExists = userRepository.findByUsername(username);
+        if (userExists.isPresent()) {
+            throw new UserAlreadyExistsException();
+        }
+
         User user = new User();
 
         user.setUsername(username);
